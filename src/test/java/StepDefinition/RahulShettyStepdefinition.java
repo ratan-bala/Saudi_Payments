@@ -6,6 +6,9 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +29,22 @@ public class RahulShettyStepdefinition {
         }
 
     }
+
+    @When("User sends headers as")
+    public void User_sends_header_as(io.cucumber.datatable.DataTable dataTable){
+        List<Map<String, String>> data=dataTable.asMaps(String.class, String.class);
+        for(Map<String,String> pairs:data){
+            requestSpecification=requestSpecification.headers(pairs.get("Key"),pairs.get("Value"));
+        }
+
+    }
+
+    @When("User sends body as {string}")
+    public void User_sends_body_as(String body) throws IOException {
+        requestSpecification=requestSpecification.body(new String(Files.readAllBytes(Paths.get("src/main/java/Request_body/"+body))));
+
+    }
+
     @When("User sends Resources as {string} with call as {string}")
     public void User_sends_Resources_as_with_call_as(String resource,String call){
         if(call.equalsIgnoreCase("get")){
